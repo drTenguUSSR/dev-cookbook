@@ -8,16 +8,51 @@
 https://habr.com/ru/companies/ssp-soft/articles/844980/
 
 Как конфигурировать Git
-https://habr.com/ru/articles/886538/
+[https://habr.com/ru/articles/886538/](https://habr.com/ru/articles/886538/)
+
+## Main. TOC
+
+- [cookbook-github](#cookbook-github)
+  - [tmp1](#tmp1)
+  - [Main. TOC](#main-toc)
+    - [Finding Unused Gradle Dependencies](#finding-unused-gradle-dependencies)
+  - [G25-1. Схема именования веток и коментарии к комитам (на базе GitHub Flow)](#g25-1-схема-именования-веток-и-коментарии-к-комитам-на-базе-github-flow)
+    - [G25-1. Ветки](#g25-1-ветки)
+    - [G25-1. Коммит в проект](#g25-1-коммит-в-проект)
+      - [Пример ветка + коммит](#пример-ветка--коммит)
+    - [G25-2. Коммит в репозиторий с подпроектами](#g25-2-коммит-в-репозиторий-с-подпроектами)
+  - [Быстрый/простой коммит](#быстрыйпростой-коммит)
+  - [Закрытие issue через коментарий к коммиту](#закрытие-issue-через-коментарий-к-коммиту)
+  - [Ссылка на issue](#ссылка-на-issue)
+  - [Git-консоль. вывод настроек](#git-консоль-вывод-настроек)
+  - [Как создать ветку средствами github от конкретного коммита?](#как-создать-ветку-средствами-github-от-конкретного-коммита)
+  - [Выбрать для нового issue существующую ветку?](#выбрать-для-нового-issue-существующую-ветку)
+  - [настроить Git-клиент доступ к GitHub.com с помощью Personal access tokens (Qwen-3 max)](#настроить-git-клиент-доступ-к-githubcom-с-помощью-personal-access-tokens-qwen-3-max)
+    - [примечания](#примечания)
+  - [Hастроить Git-клиент доступ к GitHub.com с помощью ssh (Qwen-3 max) - через ppk](#hастроить-git-клиент-доступ-к-githubcom-с-помощью-ssh-qwen-3-max---через-ppk)
+    - [как git-клиент определяет нужный файл при соединении с github в папке .ssh?](#как-git-клиент-определяет-нужный-файл-при-соединении-с-github-в-папке-ssh)
+    - [Как проверить, какой ключ используется?](#как-проверить-какой-ключ-используется)
+    - [пример `~/.ssh/config` два эккаунта](#пример-sshconfig-два-эккаунта)
+  - [git-настройки `.git/config`](#git-настройки-gitconfig)
+  - [вывод диаграммы ганта?](#вывод-диаграммы-ганта)
+  - [имя ветки с кириллицей?](#имя-ветки-с-кириллицей)
+  - [GPG: создание, установка в GitHub, отзыв сертификата](#gpg-создание-установка-в-github-отзыв-сертификата)
+  - [искать в Idea в Git Log по RegExp по коментарию?](#искать-в-idea-в-git-log-по-regexp-по-коментарию)
+  - [Intellij Idea. GitLog настроить как отдельную "вкладку"](#intellij-idea-gitlog-настроить-как-отдельную-вкладку)
+  - [Intellij Idea. Переход по id-комита](#intellij-idea-переход-по-id-комита)
+  - [Intelij Idea. Отображение сопоставления локальной и remote ветки](#intelij-idea-отображение-сопоставления-локальной-и-remote-ветки)
+  - [Intelij Idea. переименование ветки локально и remote](#intelij-idea-переименование-ветки-локально-и-remote)
+    - [Переименование локальной ветки](#переименование-локальной-ветки)
+    - [Переименование удаленной ветки](#переименование-удаленной-ветки)
 
 ### Finding Unused Gradle Dependencies
 
-https://www.baeldung.com/gradle-finding-unused-dependencies
+[https://www.baeldung.com/gradle-finding-unused-dependencies](https://www.baeldung.com/gradle-finding-unused-dependencies)
 https://github.com/nebula-plugins/gradle-lint-plugin
 
 ## G25-1. Схема именования веток и коментарии к комитам (на базе GitHub Flow)
 
-### G25-1. Ветки 
+### G25-1. Ветки
 
 имя ветки := prefix + "/" + bbbb
 
@@ -32,7 +67,7 @@ prefix := "feature" | "release" | "zzz"
 
 bbbb := номер issue из GitHub
 
-### G25-1. Коммит
+### G25-1. Коммит в проект
 
 имя коммита := "#" + bbbb + ". " + description
 
@@ -40,17 +75,35 @@ bbbb := номер issue из GitHub
 
 description := описание конкретного изменения в этом комите
 
-### Пример ветка + коммит
+#### Пример ветка + коммит
 
 1. в github есть issue номер 1220
 2. в git создается ветка "feature/1220"
-3. все комиты связаные с этой веткой именуются как "#1220. Добавлен контроллер /api/public/hello"
+3. все комиты связаные с этой веткой именуются как "\#1220. Добавлен контроллер /api/public/hello"
 4. по окончании работы feaure/1220 мержится в main ветку и ветка feaure/1220 удаляется.
 
-Примечание: нужно писать в коментарии именно "#1220". Результат внутри 
+Примечание: нужно писать в коментарии именно "\#1220". Результат внутри
 issue будет добавляться информация.
 
-## быстрый/простой коммит
+### G25-2. Коммит в репозиторий с подпроектами
+
+Пример - подпроекты в [https://github.com/drTenguUSSR/java8-apps-testlab](https://github.com/drTenguUSSR/java8-apps-testlab)
+
+имя коммита := "#" + bbbb + ". " + dddd + ". " + description
+
+bbbb := номер issue из GitHub
+
+dddd := идентификатор под проекта
+
+description := описание конкретного изменения в этом комите
+
+пример: субпроект "261_hdd-integrity-check"
+
+````txt
+#1220. 261. исправлен подсчет контольной суммы
+````
+
+## Быстрый/простой коммит
 
 ```cmd
 git checkout -b feature-branch
@@ -62,13 +115,28 @@ git checkout main
 git branch -d feature-branch
 ```
 
-## закрытие issue через коментарий к коммиту
+## Закрытие issue через коментарий к коммиту
 
 нужно:
+
 - отправить коммит с коментарием содержащис одно из слов close,
 closes, closed, fix, fixes, fixed, resolve, resolves, resolved и ссылку на issue
 напимер "закрытие fix #4"
 - коммит должен быть слит (merged) в ветку по умолчанию (обычно main или master)
+
+## Ссылка на issue
+
+документация [https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls)
+
+работает в Issue and pull request comments, Issue and pull request descriptions, Discussions; не работает в  Markdown-файлах:
+
+- краткая ссылка в томже проекте - \#123
+
+- ссылка из других проектов - drTenguUSSR/test4#2
+
+работает в markdown-файле:
+- ссылка из других проектов - drTenguUSSR/test4#2
+
 
 ## Git-консоль. вывод настроек
 
