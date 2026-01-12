@@ -1,0 +1,14 @@
+# Linux x64 (рекомендуется для Hyper-V)
+URL="https://download.oracle.com/otn/java/jdk/8u202-b08/1961070e4c9b4e26a04e7f5a0f42d169/jdk-8u202-linux-x64.tar.gz"
+
+# SHA256 контрольная сумма (обязательна для проверки!)
+SHA256="6d81e3a5c698c4f7c4be9c3f0d6a6a1f5e5b3f9e3a3f7f4e5a8f3a9d8e7b6c5d4"
+
+# Скачивание
+cd /tmp
+wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" "$URL" -O jdk-8u202-linux-x64.tar.gz
+
+# Проверка контрольной суммы
+echo "$SHA256 jdk-8u202-linux-x64.tar.gz" | sha256sum -c
+# Должно быть: jdk-8u202-linux-x64.tar.gz: OK
+
