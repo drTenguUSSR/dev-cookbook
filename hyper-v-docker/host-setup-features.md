@@ -79,13 +79,13 @@ Get-VMHost | Select-Object Name, VirtualHardDiskPath, VirtualMachinePath
 
 ## Важные замечания
 
-1. BIOS/UEFI настройки (проверьте перед установкой)
+1.BIOS/UEFI настройки (проверьте перед установкой)
 
 - ✅ Virtualization Technology (Intel VT-x/AMD-V) - ВКЛЮЧЕНО
 - ✅ SLAT (Second Level Address Translation) - ВКЛЮЧЕНО (требуется для динамической памяти)
 - ❌ Hyper-V в BIOS не нужно включать отдельно - это настраивается в Windows
 
-2. Требования к оборудованию
+2.Требования к оборудованию
 
 - RAM: Минимум 16GB (8GB для хоста + 8GB для VM с динамической памятью)
 - CPU: 4+ физических ядра (рекомендуется 6+ для комфортной работы)
