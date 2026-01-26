@@ -1,19 +1,70 @@
-# docker-windows
+# Debian 13.2.0 для Hyper-V VM
+
+## Обязательные настройки Debian
 
 ```bash
-# Проверить загруженные модули Hyper-V:
-$ lsmod | grep hv_
-hv_vmbus             123456  5 hv_netvsc,hv_utils,hv_storvsc,hv_balloon,hv_sock
-hv_netvsc             65432  0
-hv_storvsc            32109  2
-hv_balloon            21098  0  # Критичен для динамической памяти!
+# 1. Установка гостевых утилит Hyper-V (уже включены в ядро 6.8)
+sudo apt update && sudo apt install -y linux-cloud-tools-common hyperv-daemons
 
-# Проверить статус Hyper-V интеграции:
-$ sudo dmesg | grep -i hyper-v
-[    1.234567] Hyper-V Host Build:18362-10.0-3-0.3194
-[    1.234568] Hyper-V: Registering HyperV Bus
-[    1.234569] hv_vmbus: VMBUS IC version 3.0
+# 2. Оптимизация динамической памяти
+echo "options hv_balloon force_balloon=1" | sudo tee /etc/modprobe.d/hv_balloon.conf
+echo "vm.swappiness=5" | sudo tee -a /etc/sysctl.conf  # Минимизировать свопинг
+
+# 3. Настройка для Java-разработки
+sudo apt install -y openjdk-21-jdk maven gradle docker.io
+sudo usermod -aG docker $USER
+
+# 4. Оптимизация файловой системы
+echo "tmpfs /tmp tmpfs defaults,noatime,nosuid,size=4G 0 0" | sudo tee -a /etc/fstab
+echo "tmpfs /var/tmp tmpfs defaults,noatime,nosuid,size=2G 0 0" | sudo tee -a /etc/fstab
+
+# 5. Это улучшает точность таймеров для Java-приложений
+# ЕДИНСТВЕННАЯ рекомендуемая настройка для большинства случаев:
+echo "GRUB_CMDLINE_LINUX_DEFAULT=\"\$GRUB_CMDLINE_LINUX_DEFAULT hv_tsc_clocksource=1\"" | sudo tee -a /etc/default/grub
+sudo update-grub
+sudo reboot
 ```
+
+### проверка настроек Debian 13.2.0
+
+```bash
+# Посмотреть загруженные параметры:
+cat /proc/cmdline
+# Должно быть что-то вроде:
+# BOOT_IMAGE=/vmlinuz-6.8.0-21-amd64 root=/dev/mapper/debian--vg-root ro quiet
+
+# Проверить загруженные модули Hyper-V:
+lsmod | grep hv_
+# В Debian 13.2.0 должно быть:
+hv_netvsc             123456  0
+hv_storvsc            65432  1
+hv_balloon            43210  0 # Критичен для динамической памяти!
+hv_vmbus              98765  4 hv_netvsc,hv_utils,hv_storvsc,hv_balloon
+```
+
+## Конфигурация Hyper-V для Debian 13.2.0:
+
+```powershell
+$vmName = "Debian-13-Java-Dev"
+New-VM -Name $vmName -MemoryStartupBytes 4GB -Generation 2 `
+  -NewVHDPath "D:\VMs\$vmName\disk.vhdx" -NewVHDSizeBytes 150GB
+
+# Критично для ядра 6.8: отключить Secure Boot
+Set-VMFirmware -VMName $vmName -EnableSecureBoot Off
+
+# Динамическая память с буфером для Java сборок
+Set-VMMemory -VMName $vmName -DynamicMemoryEnabled $true `
+  -MinimumBytes 2GB -StartupBytes 4GB -MaximumBytes 32GB `
+  -BufferPercentage 40  # Увеличенный буфер для Maven/Gradle
+
+# Процессор: 6 ядер для параллельных сборок
+Set-VMProcessor -VMName $vmName -Count 6 -Reserve 30 -Maximum 100
+```
+
+=================================================================================================
+## dead:docker-windows
+
+
 
 Оптимизация для Hyper-V:
 

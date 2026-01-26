@@ -15,8 +15,27 @@ H:, raid-0 средствами Windows, NTFS, 64к на четырех диск
 
 G:, самый быстрый диск
 
-## проверка внутри Windows
+## Проверка внутри Windows
 
 crystal disk mark, 64gb, R70%/W30%
 h: seq1m: read=810 mb/s, write=763 mb/s, mix=192 mb/s
 g: srq1m: read=264 mb/s, write=264 mb/s, mix=150 mb/s
+
+## Скрипт тестирования в Debian
+
+```bash
+#!/bin/bash
+DISK="/dev/sdb"  # RAID 0 или LVM
+mkdir -p /docker/test
+
+echo "=== Random 4K Read ==="
+fio --name=randread --ioengine=libaio --direct=1 --rw=randread --bs=4k --iodepth=64 --size=5G --runtime=30 --filename=/docker/test/testfile
+
+echo "=== Random 4K Write ==="
+fio --name=randwrite --ioengine=libaio --direct=1 --rw=randwrite --bs=4k --iodepth=64 --size=5G --runtime=30 --filename=/docker/test/testfile
+
+echo "=== Sequential 1M ==="
+fio --name=seq --ioengine=libaio --direct=1 --rw=randrw --bs=1M --iodepth=32 --rwmixread=50 --size=10G --runtime=30 --filename=/docker/test/testfile
+
+rm -f /docker/test/testfile
+```

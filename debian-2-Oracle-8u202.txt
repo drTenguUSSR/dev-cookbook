@@ -12,3 +12,4 @@ wget --no-check-certificate -c --header "Cookie: oraclelicense=accept-secureback
 echo "$SHA256 jdk-8u202-linux-x64.tar.gz" | sha256sum -c
 # Должно быть: jdk-8u202-linux-x64.tar.gz: OK
 
+продолжение "docker-1809": от точки "замени версию oracle java 1.8 на Java SE 8u202."

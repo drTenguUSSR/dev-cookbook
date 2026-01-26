@@ -24,6 +24,10 @@ Windows Registry Editor Version 5.00
 "EnableSuperfetch"=dword:00000000
 ```
 
+*Примечание*: папка Device была в iaStorAC, но есть и другие возможные места
+(например: iaStorV, iaStorAV и т. д.). Просто найдите ту, в которой есть папка device в параметрах.
+Щелкните правой кнопкой мыши в правой части окна и выберите New>Dword(32 bit) Value. Назовите значение "EnableAPM"=0.
+
 ## борьба Seagate S.M.A.R.T. Attribute 193 (C1 hex), "Load/Unload Cycle Count"
 
 описание - [https://manpages.debian.org/testing/openseachest/](https://manpages.debian.org/testing/openseachest/)
@@ -66,4 +70,4 @@ openSeaChest_PowerControl.exe -d PD2 --setAPMLevel 254
 openSeaChest_PowerControl.exe -d PD2 --showAPMLevel
 ```
 
-*дополнение*: применяется также при возникновении ошибки "Configuring EPC Settings is not supported on this device." при вызове настройка-1
+*Примечание*: применяется также при возникновении ошибки "Configuring EPC Settings is not supported on this device." при вызове настройка-1
