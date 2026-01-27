@@ -41,26 +41,6 @@ hv_storvsc            65432  1
 hv_balloon            43210  0 # Критичен для динамической памяти!
 hv_vmbus              98765  4 hv_netvsc,hv_utils,hv_storvsc,hv_balloon
 ```
-
-## Конфигурация Hyper-V для Debian 13.2.0:
-
-```powershell
-$vmName = "Debian-13-Java-Dev"
-New-VM -Name $vmName -MemoryStartupBytes 4GB -Generation 2 `
-  -NewVHDPath "D:\VMs\$vmName\disk.vhdx" -NewVHDSizeBytes 150GB
-
-# Критично для ядра 6.8: отключить Secure Boot
-Set-VMFirmware -VMName $vmName -EnableSecureBoot Off
-
-# Динамическая память с буфером для Java сборок
-Set-VMMemory -VMName $vmName -DynamicMemoryEnabled $true `
-  -MinimumBytes 2GB -StartupBytes 4GB -MaximumBytes 32GB `
-  -BufferPercentage 40  # Увеличенный буфер для Maven/Gradle
-
-# Процессор: 6 ядер для параллельных сборок
-Set-VMProcessor -VMName $vmName -Count 6 -Reserve 30 -Maximum 100
-```
-
 =================================================================================================
 ## dead:docker-windows
 
@@ -98,28 +78,10 @@ debian-13.2.0-amd64-DVD-1.iso
 
 ! Пример конфигурации Ubuntu VM для максимальной производительности
 
-! 1. Создание VM с оптимальными настройками
-$vmName = "Ubuntu-Docker-Host"
-New-VM -Name $vmName -MemoryStartupBytes 4GB -Generation 2 -NewVHDPath "D:\VMs\$vmName\disk.vhdx" -NewVHDSizeBytes 120GB
-
-! 2. Настройка процессора (рекомендуется фиксированное ядро для стабильности)
-Set-VMProcessor -VMName $vmName -Count 4 -Reserve 25 -Maximum 100
-
-! 3. КРИТИЧЕСКИ ВАЖНО: Настройка динамической памяти
-Set-VMMemory -VMName $vmName -DynamicMemoryEnabled $true `
-  -MinimumBytes 2GB `
-  -StartupBytes 4GB `
-  -MaximumBytes 24GB `
-  -BufferPercentage 30  # 30% буфер для быстрого роста
-
 ! 4. Сеть: Использование External switch для максимальной производительности
 $switchName = "Docker-Optimized"
 New-VMSwitch -Name $switchName -NetAdapterName (Get-NetAdapter | Where Status -eq 'Up' | Select -First 1).Name -AllowManagementOS $true
 Connect-VMNetworkAdapter -VMName $vmName -SwitchName $switchName
-
-! 5. Диск: Оптимизация VHDX для SSD
-Optimize-VHD -Path "D:\VMs\$vmName\disk.vhdx" -Mode Full
-Set-VHD -Path "D:\VMs\$vmName\disk.vhdx" -PhysicalSectorSizeBytes 4096
 
 =======================================================
 
