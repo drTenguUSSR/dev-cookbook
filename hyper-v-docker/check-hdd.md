@@ -18,8 +18,10 @@ G:, самый быстрый диск
 ## Проверка внутри Windows
 
 crystal disk mark, 64gb, R70%/W30%
-h: seq1m: read=810 mb/s, write=763 mb/s, mix=192 mb/s
-g: srq1m: read=264 mb/s, write=264 mb/s, mix=150 mb/s
+
+![windows-crystal-G.png](images/windows-crystal-G.png)
+
+![windows-crystal-H.png](images/windows-crystal-H.png)
 
 ## Скрипт тестирования в Debian
 
